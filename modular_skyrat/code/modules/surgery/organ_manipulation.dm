@@ -1,7 +1,7 @@
 /datum/surgery_step/manipulate_organs
-	implements = list(/obj/item/organ = 100, /obj/item/organ_storage = 100, /obj/item/stack/medical/bruise_pack = 100, /obj/item/stack/medical/ointment = 100, /obj/item/stack/medical/mesh = 100, /obj/item/stack/medical/aloe = 100, /obj/item/stack/medical/suture = 100, /obj/item/reagent_containers = 100)
-	var/heal_amount = 40
-	var/disinfect_amount = 20
+	implements = list(/obj/item/organ = 100, /obj/item/organ_storage = 100, /obj/item/stack/medical/bruise_pack = 100, /obj/item/stack/medical/ointment = 100, /obj/item/stack/medical/mesh = 100, /obj/item/stack/medical/aloe = 100, /obj/item/stack/medical/suture = 100, /obj/item/reagent_containers = 100, /obj/item/pen = 100)
+	var/heal_amount = 80
+	var/disinfect_amount = 30
 
 /datum/surgery_step/manipulate_organs/preop(mob/user, mob/living/carbon/target, target_zone, obj/item/tool, datum/surgery/surgery)
 	I = null
@@ -57,9 +57,12 @@
 		var/obj/item/stack/medical/M = tool
 		var/list/organs = target.getorganszone(target_zone)
 		for(var/obj/item/organ/O in organs)
+			if(O.damage <= 5)
+				organs -= O
+				continue
+			O.on_find(user)
+			organs -= O
 			organs[O.name] = O
-			if(!O.damage)
-				organs -= O.name
 		if(!length(organs))
 			display_results(user, target, "<span class='notice'>There are no damaged organs in the [parse_zone(target_zone)]!</span>",
 				"[user] begins to heal [target]'s [parse_zone(target_zone)], only to be met with no damaged organs at all.",
@@ -69,7 +72,9 @@
 		if(!choice)
 			return -1
 		var/obj/item/organ/targeted_organ = organs[choice]
-		surgery.operated_organ = targeted_organ
+		if(!istype(targeted_organ))
+			return -1
+		I = targeted_organ
 		current_type = "heal"
 		if(M.use(2))
 			display_results(user, target, "<span class='notice'>You begin to heal \the [targeted_organ] in [target]'s [parse_zone(target_zone)]...</span>",
@@ -81,9 +86,12 @@
 	else if(istype(tool, /obj/item/reagent_containers))
 		var/list/organs = target.getorganszone(target_zone)
 		for(var/obj/item/organ/O in organs)
+			if(O.damage <= 5)
+				organs -= O
+				continue
+			O.on_find(user)
+			organs -= O
 			organs[O.name] = O
-			if(!O.damage)
-				organs -= O.name
 		if(!length(organs))
 			display_results(user, target, "<span class='notice'>There are no damaged organs in the [parse_zone(target_zone)]!</span>",
 				"[user] begins to heal [target]'s [parse_zone(target_zone)], only to be met with no damaged organs at all.",
@@ -93,7 +101,9 @@
 		if(!choice)
 			return -1
 		var/obj/item/organ/targeted_organ = organs[choice]
-		surgery.operated_organ = targeted_organ
+		if(!istype(targeted_organ))
+			return -1
+		I = targeted_organ
 		current_type = "heal"
 		var/obj/item/reagent_containers/R = tool
 		var/text2add = istype(R, /obj/item/reagent_containers/pill) ? "To top it off, you ended up wasting \the [R] for no good reason.":""
@@ -144,9 +154,12 @@
 			return -1
 	else if(istype(tool, /obj/item/pen) && user.a_intent == INTENT_HELP)
 		var/list/organlist = target.getorganszone(target_zone)
-		for(var/obj/item/organ/O in organlist)
-			organlist[O.name] = O
-		var/choice = input(user, "What organ do you want to etch on?", "Malpractice", "") as null|anything in organlist
+		var/list/organs = target.getorganszone(target_zone)
+		for(var/obj/item/organ/O in organs)
+			O.on_find(user)
+			organs -= O
+			organs[O.name] = O
+		var/choice = input(user, "What organ do you want to etch on?", "Malpractice", null) as null|anything in organlist
 		if(choice)
 			var/obj/item/organ/malpracticed = organlist[choice]
 			if(istype(malpracticed))
@@ -154,7 +167,6 @@
 		return -1
 
 /datum/surgery_step/manipulate_organs/success(mob/user, mob/living/carbon/target, target_zone, obj/item/tool, datum/surgery/surgery)
-	var/obj/item/organ/O = surgery.operated_organ
 	if(current_type == "insert")
 		if(istype(tool, /obj/item/organ_storage))
 			I = tool.contents[1]
@@ -183,6 +195,9 @@
 				"[user] can't seem to extract anything from [target]'s [parse_zone(target_zone)]!",
 				"[user] can't seem to extract anything from [target]'s [parse_zone(target_zone)]!")
 	else if(current_type == "heal")
+		var/obj/item/organ/O = I
+		if(!istype(O))
+			return FALSE
 		var/healedatall = FALSE
 		if(O.damage < (O.maxHealth - O.maxHealth/10))
 			O.applyOrganDamage(-heal_amount)
@@ -200,6 +215,9 @@
 				"[user] has failed to heal [target]'s [O.name]!",
 				"[user] has failed to heal [target]'s [O.name]!")
 	else if(current_type == "disinfect")
+		var/obj/item/organ/O = I
+		if(!istype(O))
+			return FALSE
 		if(O.damage >= (O.maxHealth - O.maxHealth/10) && !(O.status == ORGAN_ROBOTIC))
 			O.applyOrganDamage(-disinfect_amount)
 			display_results(user, target, "<span class='notice'>You have succesfully disinfected [target]'s [O.name].</span>",
@@ -213,4 +231,4 @@
 			display_results(user, target, "<span class='danger'>You were unable to fix [target]'s [O.name].</span>",
 				"[user] couldn't disinfect [target]'s [O.name]!",
 				"[user] couldn't disinfect [target]'s [O.name]!")
-	return 0
+	return TRUE
