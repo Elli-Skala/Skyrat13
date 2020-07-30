@@ -75,7 +75,7 @@
 	var/obj/item/bodypart/affecting = get_bodypart(impacting_zone)
 	if(!affecting) //missing limb? we select the first bodypart (you can never have zero, because of chest)
 		affecting = bodyparts[1]
-	send_item_attack_message(I, user, affecting.name, null, affecting)
+	send_item_attack_message(I, user, affecting.name, affecting.body_zone, affecting)
 	SEND_SIGNAL(I, COMSIG_ITEM_ATTACK_ZONE, src, user, affecting)
 	I.do_stagger_action(src, user, totitemdamage)
 	if(I.force)
@@ -97,12 +97,12 @@
 					if(head && prob(basebloodychance))
 						head.add_mob_blood(src)
 						update_inv_head()
-				var/dist = rand(1,max(min(round(totitemdamage/5, 1),3), 1))
+				var/dist = rand(0,max(min(round(totitemdamage/5, 1),3), 1))
 				var/turf/location = get_turf(src)
 				if(istype(location))
 					add_splatter_floor(location)
 				var/turf/targ = get_ranged_target_turf(user, get_dir(user, src), dist)
-				if(istype(targ))
+				if(istype(targ) && dist > 0)
 					var/obj/effect/decal/cleanable/blood/hitsplatter/B = new(loc, get_blood_dna_list())
 					B.add_blood_DNA(get_blood_dna_list())
 					B.GoTo(targ, dist)
@@ -165,19 +165,20 @@
 		var/datum/disease/D = thing
 		if(D.spread_flags & DISEASE_SPREAD_CONTACT_SKIN)
 			ContactContractDisease(D)
-	
-	//skyrat edit
-	for(var/datum/wound/W in all_wounds)
-		if(W.try_handling(user))
-			return TRUE
-	//
 
+	//surgeries have higher priority than wounds due to incision wounds.
 	if(surgeries.len)
 		if(user.a_intent == INTENT_HELP)
 			for(var/datum/surgery/S in surgeries)
 				if(!S.lying_required || (S.lying_required && lying))
 					if(S.next_step(user, user.a_intent))
 						return TRUE
+	
+	//skyrat edit
+	for(var/datum/wound/W in all_wounds)
+		if(W.try_handling(user))
+			return TRUE
+	//
 
 
 /mob/living/carbon/attack_paw(mob/living/carbon/monkey/M)
