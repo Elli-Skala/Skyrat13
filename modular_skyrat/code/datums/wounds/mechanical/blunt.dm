@@ -334,7 +334,7 @@
 /datum/wound/mechanical/blunt/severe
 	name = "Malfunctioning Actuators"
 	desc = "Patient's actuators are malfunctioning, causing reduced limb functionality and performance."
-	treat_text = "Recommended internal repair of the limb, though sticky tape will prevent a worsening situation."
+	treat_text = "Recommended taping and welding of the affected limb."
 	examine_desc = "has loose and disconnected bits of metal"
 
 	occur_text = "loudly hums as some loose nuts and bolts fall out"
@@ -352,10 +352,14 @@
 	trauma_cycle_cooldown = 1.5 MINUTES
 	shock_chance = 30
 
+/*
+	Critical (Broken Actuators)
+*/
+
 /datum/wound/mechanical/blunt/critical
 	name = "Broken Actuators"
 	desc = "Patient's actuators have suffered severe dents and component losses, causing a severe decrease in limb functionality and performance."
-	treat_text = "Complete internal component repair and replacement."
+	treat_text = "Recommended complete internal component repair and replacement, but taping and welding of the limb might suffice."
 	examine_desc = "is damaged at several spots, with protuding bits of metal"
 	occur_text = "loudly hums as it's rotors scrapes away bits of metal"
 	severity = WOUND_SEVERITY_CRITICAL
@@ -394,7 +398,7 @@
 		
 		victim.visible_message("<span class='notice'>[victim] finishes fastening [victim.p_their()] [limb.name]!</span>", "<span class='notice'>You fastening your [limb.name]!</span>")
 
-	limb.receive_damage(20, stamina=80, wound_bonus=CANT_WOUND)
+	limb.receive_damage(15, stamina=75, wound_bonus=CANT_WOUND)
 	if(!wrenched)
 		wrenched = TRUE
 
