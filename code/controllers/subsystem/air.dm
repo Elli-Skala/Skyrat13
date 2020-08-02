@@ -2,7 +2,7 @@ SUBSYSTEM_DEF(air)
 	name = "Atmospherics"
 	init_order = INIT_ORDER_AIR
 	priority = FIRE_PRIORITY_AIR
-	wait = 5
+	wait = 6
 	flags = SS_BACKGROUND
 	runlevels = RUNLEVEL_GAME | RUNLEVEL_POSTGAME
 
@@ -160,7 +160,7 @@ SUBSYSTEM_DEF(air)
 			thing.process()
 		else
 			networks.Remove(thing)
-		if(MC_TICK_CHECK)
+		if(MC_TICK_CHECK_LOW_PRIORITY)
 			return
 
 /datum/controller/subsystem/air/proc/add_to_rebuild_queue(atmos_machine)
@@ -178,7 +178,7 @@ SUBSYSTEM_DEF(air)
 		currentrun.len--
 		if(!M || (M.process_atmos(seconds) == PROCESS_KILL))
 			atmos_machinery.Remove(M)
-		if(MC_TICK_CHECK)
+		if(MC_TICK_CHECK_LOW_PRIORITY)
 			return
 
 
@@ -191,7 +191,7 @@ SUBSYSTEM_DEF(air)
 		currentrun.len--
 		if(T)
 			T.process_cell_reaction()
-		if(MC_TICK_CHECK)
+		if(MC_TICK_CHECK_LOW_PRIORITY)
 			return
 
 
@@ -204,7 +204,7 @@ SUBSYSTEM_DEF(air)
 		var/turf/T = currentrun[currentrun.len]
 		currentrun.len--
 		T.super_conduct()
-		if(MC_TICK_CHECK)
+		if(MC_TICK_CHECK_LOW_PRIORITY)
 			return
 
 /datum/controller/subsystem/air/proc/process_hotspots(resumed = 0)
@@ -219,7 +219,7 @@ SUBSYSTEM_DEF(air)
 			H.process()
 		else
 			hotspots -= H
-		if(MC_TICK_CHECK)
+		if(MC_TICK_CHECK_LOW_PRIORITY)
 			return
 
 
@@ -229,7 +229,7 @@ SUBSYSTEM_DEF(air)
 		high_pressure_delta.len--
 		T.high_pressure_movements()
 		T.pressure_difference = 0
-		if(MC_TICK_CHECK)
+		if(MC_TICK_CHECK_LOW_PRIORITY)
 			return
 
 /datum/controller/subsystem/air/proc/process_excited_groups(resumed = 0)
@@ -246,12 +246,12 @@ SUBSYSTEM_DEF(air)
 			EG.self_breakdown()
 		else if(EG.dismantle_cooldown >= EXCITED_GROUP_DISMANTLE_CYCLES)
 			EG.dismantle()
-		if (MC_TICK_CHECK)
+		if (MC_TICK_CHECK_LOW_PRIORITY)
 			return
 
 /datum/controller/subsystem/air/proc/remove_from_active(turf/open/T)
 	active_turfs -= T
-	SSair_turfs.currentrun -= T
+	//SSair_turfs.currentrun -= T //Skyrat change
 	#ifdef VISUALIZE_ACTIVE_TURFS
 	T.remove_atom_colour(TEMPORARY_COLOUR_PRIORITY, "#00ff00")
 	#endif
@@ -267,7 +267,7 @@ SUBSYSTEM_DEF(air)
 		T.add_atom_colour("#00ff00", TEMPORARY_COLOUR_PRIORITY)
 		#endif
 		T.excited = TRUE
-		active_turfs[T] = SSair_turfs.currentrun[T] = TRUE
+		active_turfs[T] = /*SSair_turfs.currentrun[T] =*/ TRUE //Skyrat change
 		if(blockchanges && T.excited_group)
 			T.excited_group.garbage_collect()
 		add_to_react_queue(T)

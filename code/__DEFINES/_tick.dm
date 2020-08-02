@@ -26,3 +26,17 @@
 #define TICK_CHECK_HIGH_PRIORITY ( TICK_USAGE > 95 )
 /// runs stoplag if tick_usage is above 95, for high priority usage
 #define CHECK_TICK_HIGH_PRIORITY ( TICK_CHECK_HIGH_PRIORITY? stoplag() : 0 )
+
+/// Returns true if tick usage is above 25, for low priority usage
+#define TICK_CHECK_LOW_PRIORITY ( TICK_USAGE > 25 )
+/// runs stoplag if tick_usage is above 25, for low priority usage
+#define CHECK_TICK_LOW_PRIORITY ( TICK_CHECK_LOW_PRIORITY? stoplag() : 0 )
+
+#define MC_TICK_CHECK_LOW_PRIORITY ( ( TICK_CHECK_LOW_PRIORITY || src.state != SS_RUNNING ) ? pause() : 0 ) 
+
+/// Returns true if tick usage is above 15, for very low priority usage
+#define TICK_CHECK_VERY_LOW_PRIORITY ( TICK_USAGE > 15 )
+/// runs stoplag if tick_usage is above 15, for very low priority usage
+#define CHECK_TICK_VERY_LOW_PRIORITY ( TICK_CHECK_LOW_PRIORITY? stoplag() : 0 )
+
+#define MC_TICK_CHECK_VERY_LOW_PRIORITY ( ( TICK_CHECK_LOW_PRIORITY || src.state != SS_RUNNING ) ? pause() : 0 ) 

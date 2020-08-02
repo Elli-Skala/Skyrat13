@@ -145,7 +145,7 @@
 		cached_atmos_cooldown = 0;\
 	}
 
-/turf/proc/process_cell(fire_count)
+/*/turf/proc/process_cell(fire_count)
 	SSair.remove_from_active(src)
 
 /turf/open/process_cell(fire_count)
@@ -244,7 +244,7 @@
 	air.react(src)
 	update_visuals()
 	SSair.remove_from_react_queue(src)
-	return
+	return*/
 
 //////////////////////////SPACEWIND/////////////////////////////
 
