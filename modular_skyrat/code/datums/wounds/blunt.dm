@@ -40,6 +40,11 @@
 	Overwriting of base procs
 */
 
+/datum/wound/blunt/Destroy()
+	. = ..()
+	if(active_trauma)
+		QDEL_NULL(active_trauma)
+
 /datum/wound/blunt/on_hemostatic(quantity)
 	if((severity <= WOUND_SEVERITY_SEVERE) && (quantity >= 15))
 		internal_bleeding_chance = round(internal_bleeding_chance/2, 0.1)
@@ -530,7 +535,7 @@
 	treat_text = "Recommended light surgical application of bone gel, though a sling of medical gauze will prevent worsening situation."
 	examine_desc = "appears grotesquely swollen, its attachment weakened"
 
-	occur_text = "sprays chips of bone and develops a nasty looking bruise"
+	occur_text = "cracks audibly and develops a nasty looking bruise"
 
 	severity = WOUND_SEVERITY_SEVERE
 	viable_zones = ALL_BODYPARTS

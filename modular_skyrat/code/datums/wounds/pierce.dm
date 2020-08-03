@@ -143,7 +143,7 @@
 	name = "Minor Breakage"
 	desc = "Patient's skin has been broken open, causing severe bruising and minor internal bleeding in affected area."
 	treat_text = "Treat affected site with bandaging or exposure to extreme cold. In dire cases, brief exposure to vacuum may suffice." // lol shove your bruised arm out into space, ss13 logic
-	examine_desc = "has a small, circular hole, gently bleeding"
+	examine_desc = "has a small, circular hole, slowly bleeding"
 	occur_text = "spurts out a thin stream of blood"
 	sound_effect = 'modular_skyrat/sound/effects/blood1.ogg'
 	severity = WOUND_SEVERITY_MODERATE
@@ -179,7 +179,7 @@
 	name = "Ruptured Cavity"
 	desc = "Patient's internal tissue and circulatory system is shredded, causing significant internal bleeding and damage to internal organs."
 	treat_text = "Surgical repair of puncture wound, followed by supervised resanguination."
-	examine_desc = "is ripped clear through, barely held together by exposed bone"
+	examine_desc = "is ripped clear through, barely held together by exposed bone and tissue"
 	occur_text = "blasts apart, sending chunks of viscera flying in all directions"
 	sound_effect = 'modular_skyrat/sound/effects/blood3.ogg'
 	severity = WOUND_SEVERITY_CRITICAL

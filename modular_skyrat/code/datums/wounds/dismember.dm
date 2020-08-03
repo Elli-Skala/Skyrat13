@@ -46,7 +46,7 @@
 			if(L.is_robotic_limb())
 				occur_text = "is shattered through the last bit of endoskeleton holding it together, severing it completely"
 		if(WOUND_SLASH)
-			occur_text = "is slashed through the last tissue holding it together, severing it completely"
+			occur_text = "is slashed through the last bit of tissue holding it together, severing it completely"
 			if(L.is_robotic_limb())
 				occur_text = "is slashed through the last bit of exoskeleton layer holding it together, severing it completely"
 		if(WOUND_PIERCE)
@@ -54,7 +54,7 @@
 			if(L.is_robotic_limb())
 				occur_text = "is pierced through the last bit of exoskeleton holding it together, severing it completely"
 		if(WOUND_BURN)
-			occur_text = "is completely incinerated, falling to a pile of dust"
+			occur_text = "is completely incinerated, falling to a pile of carbonized remains"
 			if(L.is_robotic_limb())
 				occur_text = "is completely melted, falling to a puddle of debris"
 
@@ -158,7 +158,7 @@
 			minimum_flow = 0.5
 
 /datum/wound/mechanical/slash/loss
-	name = "Dismembered"
+	name = "Dismembered stump"
 	desc = "Patient's limb has been violently dismembered, leaving only a severely damaged stump in it's place."
 	treat_text = "Immediate surgical reattachment of the lost limb or suitable equivalent if possible. Welding and patching of the stump otherwise."
 	examine_desc = "has been violently severed from their body"
